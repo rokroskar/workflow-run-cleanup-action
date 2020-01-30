@@ -1,23 +1,21 @@
-# Hello world docker action
+# Workflow run cleanup action
 
-This action prints "Hello World" to the log or "Hello" + the name of a person to greet. To learn how this action was built, see "[Creating a Docker container action](https://help.github.com/en/articles/creating-a-docker-container-action)" in the GitHub Help documentation.
+This action cleans up previously running instances of a workflow
+on the same branch. This accomplishes the task of automatically
+cancelling CI runs on pushes to the same branch, which is a common
+feature in most CI systems but currently not possible with
+GitHub actions.
 
-## Inputs
+## Configuration
 
-### `who-to-greet`
-
-**Required** The name of the person to greet. Default `"World"`.
-
-## Outputs
-
-### `time`
-
-The time we greeted you.
+None. The action uses the GitHub action environment variables
+to obtain the workflow name and branch. You must, however,
+set the `GITHUB_TOKEN` environment variable.
 
 ## Example usage
 
 ```yaml
-uses: actions/hello-world-docker-action@master
-with:
-  who-to-greet: 'Mona the Octocat'
+uses: rokroskar/workflow-run-cleanup-action
+env:
+  GITHUB_TOKEN: ${{ secret.GITHUB_TOKEN }}
 ```
