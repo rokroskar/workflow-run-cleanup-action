@@ -3,3 +3,6 @@ description: 'Cancel previous runs of a workflow'
 runs:
   using: 'docker'
   image: 'Dockerfile'
+branding:
+  icon: 'activity'  
+  color: 'blue'
