@@ -29,11 +29,11 @@ name: CI
 on:
   push: []
   jobs:
-  cleanup-runs:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: rokroskar/workflow-run-cleanup-action@master
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
+    cleanup-runs:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: rokroskar/workflow-run-cleanup-action@master
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
 ```
