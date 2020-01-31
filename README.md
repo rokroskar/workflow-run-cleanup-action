@@ -36,4 +36,6 @@ on:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
+    ...
+    other-jobs:
 ```
