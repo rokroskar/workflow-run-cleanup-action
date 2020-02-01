@@ -31,12 +31,12 @@ GITHUB_API=https://api.github.com
 
 auth_header="Authorization: token ${GITHUB_TOKEN}"
 
-workflow_id=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows -H ${auth_header} | jq "${jq_workflow_id}")
+workflow_id=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows -H "${auth_header}" | jq "${jq_workflow_id}")
 
 echo "workflow id: "$workflow_id
 
 # get the run id
-run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H ${auth_header} | jq "${jq_run_id}")
+run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H "${auth_header}" | jq "${jq_run_id}")
 
 echo "run ids: "$run_ids
 
