@@ -10,7 +10,7 @@ GitHub actions.
 
 None. The action uses the GitHub action environment variables
 to obtain the workflow name and branch. You must, however,
-set the `GITHUB_TOKEN` environment variable.
+set the `GITHUB_TOKEN` and `GITHUB_RUN_ID` environment variables:
 
 ## Example usage
 
@@ -36,6 +36,7 @@ on:
       - uses: rokroskar/workflow-run-cleanup-action@master
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_RUN_ID: ${{ github.run_id }}
       if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
     ...
     other-jobs:
