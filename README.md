@@ -18,10 +18,11 @@ set the `GITHUB_TOKEN` environment variable.
 uses: rokroskar/workflow-run-cleanup-action
 env:
   GITHUB_TOKEN: ${{ secret.GITHUB_TOKEN }}
+  GITHUB_RUN_ID: ${{ github.run_id }}
 ```
 
-You may want to disable this action from running on tags or master, 
-especially if you have CD pipelines linked to your CI passing on 
+You may want to disable this action from running on tags or master,
+especially if you have CD pipelines linked to your CI passing on
 every commit. In that case, something like this should work:
 
 ```yaml
