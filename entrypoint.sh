@@ -45,5 +45,6 @@ for run_id in $run_ids
 do
   if [ "$run_id" != "$GITHUB_RUN_ID" ]; then
     curl -s -X POST -H "${auth_header}" ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel
+    echo "Cancelled run $run_id"
   fi
 done
