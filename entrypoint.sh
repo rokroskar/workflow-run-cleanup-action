@@ -20,10 +20,18 @@ then
   exit 1
 fi
 
+if [ -z "$GITHUB_HEAD_REF" ]
+then
+  # we have a push event
+  BRANCH=${GITHUB_REF:11}
+else
+  BRANCH=${GITHUB_HEAD_REF}
+fi
+
 # jq queries
 
 jq_workflow_id=".workflows |.[]| select(.name==\"${GITHUB_WORKFLOW}\") .id"
-jq_run_id=".workflow_runs | .[] | select(.head_branch==\"${GITHUB_REF:11}\" and .status==\"in_progress\") | .id"
+jq_run_id=".workflow_runs | .[] | select(.head_branch==\"${BRANCH}\" and .status==\"in_progress\") | .id"
 
 # get the github workflow ID
 
