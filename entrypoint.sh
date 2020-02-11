@@ -29,8 +29,6 @@ else
 fi
 
 # jq queries
-
-jq_workflow_id=".workflows |.[]| select(.name==\"${GITHUB_WORKFLOW}\") .id"
 jq_run_id=".workflow_runs | .[] | select(.head_branch==\"${BRANCH}\" and .status==\"in_progress\") | .id"
 
 # get the github workflow ID
@@ -39,12 +37,12 @@ GITHUB_API=https://api.github.com
 
 auth_header="Authorization: token ${GITHUB_TOKEN}"
 
-workflow_id=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows -H "${auth_header}" | jq "${jq_workflow_id}")
-
+workflow_url=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} -H "${auth_header}" | jq -r '.workflow_url' | cut -d/ -f2-)
+workflow_id=${workflow_url##/*/}
 echo "workflow id: "$workflow_id
 
-# get the run id
-run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H "${auth_header}" | jq "${jq_run_id}")
+# get the run ids
+run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H "${auth_header}" | jq -r "${jq_run_id}")
 
 echo "run ids: "$run_ids
 
