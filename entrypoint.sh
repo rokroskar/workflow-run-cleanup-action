@@ -29,7 +29,7 @@ else
 fi
 
 # jq queries
-jq_run_id=".workflow_runs | .[] | select(.head_branch==\"${BRANCH}\" and (.status==\"in_progress\" or .status==\"queued\")) | .id"
+jq_run_ids=".workflow_runs | .[] | select(.head_branch==\"${BRANCH}\" and (.status==\"in_progress\" or .status==\"queued\")) | .id"
 
 # get the github workflow ID
 
