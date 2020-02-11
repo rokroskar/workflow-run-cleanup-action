@@ -41,16 +41,14 @@ workflow_url=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${G
 workflow_id=${workflow_url##/*/}
 echo "workflow id: "$workflow_id
 
-# get the run ids
-run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H "${auth_header}" | jq -r "${jq_run_id}")
+# get the run id
+run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H "${auth_header}" | jq -r "${jq_run_id}" | sort -n | head -n-1)
 
 echo "run ids: "$run_ids
 
 # cancel the previous runs
 for run_id in $run_ids
 do
-  if [ "$run_id" != "$GITHUB_RUN_ID" ]; then
-    curl -s -X POST -H "${auth_header}" ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel
-    echo "Cancelled run $run_id"
-  fi
+  curl -s -X POST -H "${auth_header}" ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel
+  echo "Cancelled run $run_id"
 done
