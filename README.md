@@ -12,7 +12,7 @@ None. The action uses the GitHub action environment variables
 to obtain the workflow name and branch. You must, however,
 set the `GITHUB_TOKEN` environment variable:
 
-Note: if you use a personal access token, ensure that the `repo` scope is included.
+*Note: if you use a personal access token, ensure that the `repo` scope is included.*
 
 ## Example usage
 
