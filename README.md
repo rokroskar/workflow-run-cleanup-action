@@ -19,7 +19,7 @@ set the `GITHUB_TOKEN` environment variable:
 ```yaml
 uses: rokroskar/workflow-run-cleanup-action
 env:
-  GITHUB_TOKEN: ${{ secret.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 You may want to disable this action from running on tags or master,
