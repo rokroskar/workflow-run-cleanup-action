@@ -24,6 +24,7 @@ fi
 GITHUB_API=https://api.github.com
 
 auth_header="Authorization: token ${GITHUB_TOKEN}"
+accept_header="Accept: application/vnd.github.v3+json"
 
 function extractMetaInformation() {
   jq "{ workflow_id: .workflow_id, branch: .head_branch, repo: .head_repository.full_name}"
@@ -44,18 +45,18 @@ function exportAll() {
 }
 
 # extract meta information for current workflow run
-exportAll "$(curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -H "${auth_header}" | extractMetaInformation | convertToKeyValuePairs)"
+exportAll "$(curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -H "${auth_header}" -H "${accept_header}" | extractMetaInformation | convertToKeyValuePairs)"
 echo "workflow id: $workflow_id"
 echo "branch: $branch"
 echo "repo: $repo"
 
 # get the run ids for runs on same branch/repo
-run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H "${auth_header}" | getRunningWorkflowIds)
+run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H "${auth_header}" -H "${accept_header}" | getRunningWorkflowIds)
 
 echo "run ids: ${run_ids}"
 
 # cancel the previous runs
 for run_id in $run_ids; do
-  curl -s -X POST -H "${auth_header}" ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel
+  curl -s -X POST -H "${auth_header}" -H "${accept_header}" ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel
   echo "Cancelled run $run_id"
 done
