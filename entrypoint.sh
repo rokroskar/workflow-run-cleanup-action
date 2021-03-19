@@ -35,7 +35,15 @@ function convertToKeyValuePairs() {
 }
 
 function getRunningWorkflowIds() {
-  jq ".workflow_runs | .[] | select(.head_branch==\"${branch}\" and .head_repository.full_name==\"${repo}\" and .status==\"in_progress\" or .status==\"queued\" or .status== \"waiting\") | .id " | grep -v "${GITHUB_RUN_ID}" || :
+  local workflow_ids=$(jq ".workflow_runs | .[] | select(.head_branch==\"${branch}\" and .head_repository.full_name==\"${repo}\" and .status==\"in_progress\" or .status==\"queued\" or .status== \"waiting\") | .id ")
+  local condition="<"
+  for id in $workflow_ids; do
+    if [[ "$id" -gt "$GITHUB_RUN_ID" ]]; then
+      condition="<="
+      break
+    fi
+  done
+  echo $workflow_ids | jq "select( . "$condition" "$GITHUB_RUN_ID" )"
 }
 
 function exportAll() {
