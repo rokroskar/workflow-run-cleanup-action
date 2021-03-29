@@ -35,28 +35,28 @@ function convertToKeyValuePairs() {
 }
 
 function getRunningWorkflowIds() {
-  jq ".workflow_runs | .[] | select(.head_branch==\"${branch}\" and .head_repository.full_name==\"${repo}\" and .status==\"in_progress\" or .status==\"queued\" or .status== \"waiting\") | .id " | grep -v "${GITHUB_RUN_ID}" || :
+  jq ".workflow_runs | .[] | select(.head_branch==\"${branch?}\" and .head_repository.full_name==\"${repo?}\" and .status==\"in_progress\" or .status==\"queued\" or .status== \"waiting\") | .id " | grep -v "${GITHUB_RUN_ID}" || :
 }
 
 function exportAll() {
   for var in $1; do
-    export $var
+    export "${var?}"
   done
 }
 
 # extract meta information for current workflow run
 exportAll "$(curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -H "${auth_header}" -H "${accept_header}" | extractMetaInformation | convertToKeyValuePairs)"
-echo "workflow id: $workflow_id"
-echo "branch: $branch"
-echo "repo: $repo"
+echo "workflow id: ${workflow_id?}"
+echo "branch: ${branch?}"
+echo "repo: ${repo?}"
 
 # get the run ids for runs on same branch/repo
-run_ids=$(curl -s ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs -H "${auth_header}" -H "${accept_header}" | getRunningWorkflowIds)
+run_ids=$(curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs" -H "${auth_header}" -H "${accept_header}" | getRunningWorkflowIds)
 
 echo "run ids: ${run_ids}"
 
 # cancel the previous runs
 for run_id in $run_ids; do
-  curl -s -X POST -H "${auth_header}" -H "${accept_header}" ${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel
+  curl -s -X POST "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/cancel" -H "${auth_header}" -H "${accept_header}"
   echo "Cancelled run $run_id"
 done
