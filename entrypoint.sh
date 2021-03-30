@@ -5,8 +5,12 @@ set -e # fail fast
 
 #################### CONSTANTS AND HELPER FUNCTIONS  ####################
 
-GITHUB_API=https://api.github.com
+GITHUB_API="https://api.github.com"
 ACCEPT_HEADER="Accept: application/vnd.github.v3+json"
+
+WORKFLOW_ID_KEY="workflow_id"
+BRANCH_KEY="branch"
+REPO_KEY="repo"
 
 function validate_required_env_variables() {
   local required_env_variables=( "GITHUB_TOKEN" "GITHUB_REPOSITORY" "GITHUB_RUN_ID" )
@@ -20,7 +24,7 @@ function validate_required_env_variables() {
 }
 
 function extractMetaInformation() {
-  jq "{ workflow_id: .workflow_id, branch: .head_branch, repo: .head_repository.full_name}"
+  jq "{ ${WORKFLOW_ID_KEY}: .workflow_id, ${BRANCH_KEY}: .head_branch, ${REPO_KEY}: .head_repository.full_name}"
 }
 
 function getRunningWorkflowIds() {
@@ -44,9 +48,9 @@ auth_header="Authorization: token ${GITHUB_TOKEN}"
 
 # extract meta information for current workflow run
 meta_data="$( curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -H "${auth_header}" -H "${ACCEPT_HEADER}" | extractMetaInformation )"
-workflow_id="$( echo "$meta_data" | jq -r ".workflow_id" )"
-branch="$( echo "$meta_data" | jq -r ".branch" )"
-repo="$( echo "$meta_data" | jq -r ".repo" )"
+workflow_id="$( echo "$meta_data" | jq -r ".${WORKFLOW_ID_KEY}" )"
+branch="$( echo "$meta_data" | jq -r ".${BRANCH_KEY}" )"
+repo="$( echo "$meta_data" | jq ".${REPO_KEY}" )"
 
 echo "workflow id: ${workflow_id}"
 echo "branch: ${branch}"
