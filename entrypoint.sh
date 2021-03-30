@@ -23,13 +23,9 @@ function extractMetaInformation() {
   jq "{ workflow_id: .workflow_id, branch: .head_branch, repo: .head_repository.full_name}"
 }
 
-function convertToKeyValuePairs() {
-  jq -r "to_entries | map(\"\(.key)=\(.value | tostring)\") | .[]"
-}
-
 function getRunningWorkflowIds() {
   local workflow_ids
-  workflow_ids=$(jq ".workflow_runs | .[] | select(.head_branch==\"${branch?}\" and .head_repository.full_name==\"${repo?}\" and (.status==\"in_progress\" or .status==\"queued\" or .status== \"waiting\")) | .id ")
+  workflow_ids=$(jq ".workflow_runs | .[] | select(.head_branch==\"${branch}\" and .head_repository.full_name==\"${repo}\" and (.status==\"in_progress\" or .status==\"queued\" or .status== \"waiting\")) | .id ")
   local condition="<"
   for id in $workflow_ids; do
     if [[ "$id" -gt "$GITHUB_RUN_ID" ]]; then
@@ -40,12 +36,6 @@ function getRunningWorkflowIds() {
   echo "$workflow_ids" | jq "select( . $condition $GITHUB_RUN_ID )"
 }
 
-function exportAll() {
-  for var in $1; do
-    export "${var?}"
-  done
-}
-
 #################### MAIN CODE ####################
 
 validate_required_env_variables
@@ -53,13 +43,17 @@ validate_required_env_variables
 auth_header="Authorization: token ${GITHUB_TOKEN}"
 
 # extract meta information for current workflow run
-exportAll "$(curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -H "${auth_header}" -H "${ACCEPT_HEADER}" | extractMetaInformation | convertToKeyValuePairs)"
-echo "workflow id: ${workflow_id?}"
-echo "branch: ${branch?}"
-echo "repo: ${repo?}"
+meta_data="$( curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -H "${auth_header}" -H "${ACCEPT_HEADER}" | extractMetaInformation )"
+workflow_id="$( echo "$meta_data" | jq -r ".workflow_id" )"
+branch="$( echo "$meta_data" | jq -r ".branch" )"
+repo="$( echo "$meta_data" | jq -r ".repo" )"
+
+echo "workflow id: ${workflow_id}"
+echo "branch: ${branch}"
+echo "repo: ${repo}"
 
 # get the run ids for runs on same branch/repo
-run_ids=$(curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs" -H "${auth_header}" -H "${ACCEPT_HEADER}" | getRunningWorkflowIds)
+run_ids=$( curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/runs" -H "${auth_header}" -H "${ACCEPT_HEADER}" | getRunningWorkflowIds )
 
 echo "run ids: ${run_ids}"
 
