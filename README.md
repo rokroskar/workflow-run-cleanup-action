@@ -10,7 +10,9 @@ GitHub actions.
 
 ## Configuration
 
-None. The action uses the GitHub action environment variables
+* `DEBUG`: if set to `TRUE` the debug logs will be printed.
+
+* The action uses the GitHub action environment variables
 to obtain the workflow name and branch. You must, however,
 set the `GITHUB_TOKEN` environment variable:
 
@@ -22,6 +24,7 @@ set the `GITHUB_TOKEN` environment variable:
 uses: rokroskar/workflow-run-cleanup-action
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  DEBUG: FALSE
 ```
 
 You may want to disable this action from running on tags or master,

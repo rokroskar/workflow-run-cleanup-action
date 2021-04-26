@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x # enable debug
+[[ "TRUE" == "${DEBUG}" ]] && set -x # enable debug
 set -e # fail fast
 # simple script to cancel a github actions workflow given its name
 
