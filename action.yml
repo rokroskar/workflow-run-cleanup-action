@@ -1,8 +1,8 @@
-name: 'Workflow run cleanup action'
-description: 'Cancel previous runs of a workflow'
+name: Workflow run cleanup action
+description: Cancel previous runs of a workflow
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: docker
+  image: Dockerfile
 branding:
-  icon: 'activity'  
-  color: 'blue'
+  icon: activity  
+  color: blue
