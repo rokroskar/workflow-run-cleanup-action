@@ -50,7 +50,7 @@ auth_header="Authorization: token ${GITHUB_TOKEN}"
 meta_data="$( curl -s "${GITHUB_API}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" -H "${auth_header}" -H "${ACCEPT_HEADER}" | extractMetaInformation )"
 workflow_id="$( echo "$meta_data" | jq -r ".${WORKFLOW_ID_KEY}" )"
 branch="$( echo "$meta_data" | jq -r ".${BRANCH_KEY}" )"
-repo="$( echo "$meta_data" | jq ".${REPO_KEY}" )"
+repo="$( echo "$meta_data" | jq -r ".${REPO_KEY}" )"
 
 echo "workflow id: ${workflow_id}"
 echo "branch: ${branch}"
