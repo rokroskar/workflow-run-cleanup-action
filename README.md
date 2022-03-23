@@ -1,5 +1,13 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
+# DEPRECATION WARNING
+
+GitHub Action supports the functionality of this action natively with the `concurrency` command.
+
+Please check out the release artice and the official docs:
+* https://github.blog/changelog/2021-04-19-github-actions-limit-workflow-run-or-job-concurrency/
+* https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+
 # Workflow run cleanup action
 
 This action cleans up previously running instances of a workflow
